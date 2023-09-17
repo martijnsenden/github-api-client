@@ -8,13 +8,17 @@ import { NavigationMenu } from '@/components/NavigationMenu';
 
 const Page = () => {
 	const [searchQueryHistory, setSearchQueryHistory] = useState(
-		JSON.parse(sessionStorage.getItem('searchQueryHistory') || '[]') as SearchQuery[]
+		typeof window !== 'undefined'
+			? (JSON.parse(sessionStorage.getItem('searchQueryHistory') || '[]') as SearchQuery[])
+			: ([] as SearchQuery[])
 	);
 
 	function handleSearchQueryHistoryItemClick(i: number) {
 		const newSearchQueryHistory = JSON.stringify([searchQueryHistory[i], ...searchQueryHistory]);
 
-		sessionStorage.setItem('searchQueryHistory', newSearchQueryHistory);
+		if (typeof window !== 'undefined') {
+			sessionStorage.setItem('searchQueryHistory', newSearchQueryHistory);
+		}
 
 		return true;
 	}

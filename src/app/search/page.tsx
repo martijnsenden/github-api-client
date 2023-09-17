@@ -18,9 +18,12 @@ export type SearchQuery = {
 };
 
 const Page = () => {
-	const searchQueryHistoryFromSessionStorage = JSON.parse(
-		sessionStorage.getItem('searchQueryHistory') || '[]'
-	);
+	let searchQueryHistoryFromSessionStorage = [];
+
+	if (typeof window !== 'undefined') {
+		searchQueryHistoryFromSessionStorage = JSON.parse(sessionStorage.getItem('searchQueryHistory') || '[]');
+	}
+
 	const lastSearchQueryHistoryItemFromSessionStorage =
 		searchQueryHistoryFromSessionStorage.length > 0
 			? searchQueryHistoryFromSessionStorage[0]
@@ -88,7 +91,9 @@ const Page = () => {
 	const unshiftIntoSearchQueryHistory = (searchQuery: SearchQuery) => {
 		const newSearchQueryHistory = [searchQuery, ...searchQueryHistory];
 		setSearchQueryHistory(newSearchQueryHistory);
-		sessionStorage.setItem('searchQueryHistory', JSON.stringify(newSearchQueryHistory));
+		if (typeof window !== 'undefined') {
+			sessionStorage.setItem('searchQueryHistory', JSON.stringify(newSearchQueryHistory));
+		}
 	};
 
 	const handleNewSearchQuery = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -143,27 +148,27 @@ const Page = () => {
 						<input onKeyUp={handleLanguageFilterChange} ref={languageFilterInputRef} type="text" />
 					</label>
 				</fieldset>
-				<RadioGroup.Root
-					defaultValue="default"
-					aria-label="Select the field to sort the search results by"
-					onValueChange={(value: string) => storeSortBy(value as SearchSortBy)}
-					variant="classic"
-				>
-					<Flex gap="2" direction="row">
-						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<RadioGroup.Item value="default" id="r1" />
-							<label htmlFor="r1">Default sorting</label>
-						</div>
-						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<RadioGroup.Item value="stars" id="r2" />
-							<label htmlFor="r2">By stars</label>
-						</div>
-						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<RadioGroup.Item value="forks" id="r3" />
-							<label htmlFor="r3">By forks</label>
-						</div>
-					</Flex>
-				</RadioGroup.Root>
+				{/*<RadioGroup.Root*/}
+				{/*	defaultValue="default"*/}
+				{/*	aria-label="Select the field to sort the search results by"*/}
+				{/*	onValueChange={(value: string) => storeSortBy(value as SearchSortBy)}*/}
+				{/*	variant="classic"*/}
+				{/*>*/}
+				{/*	<Flex gap="2" direction="row">*/}
+				{/*		<div style={{ display: 'flex', alignItems: 'center' }}>*/}
+				{/*			<RadioGroup.Item value="default" id="r1" />*/}
+				{/*			<label htmlFor="r1">Default sorting</label>*/}
+				{/*		</div>*/}
+				{/*		<div style={{ display: 'flex', alignItems: 'center' }}>*/}
+				{/*			<RadioGroup.Item value="stars" id="r2" />*/}
+				{/*			<label htmlFor="r2">By stars</label>*/}
+				{/*		</div>*/}
+				{/*		<div style={{ display: 'flex', alignItems: 'center' }}>*/}
+				{/*			<RadioGroup.Item value="forks" id="r3" />*/}
+				{/*			<label htmlFor="r3">By forks</label>*/}
+				{/*		</div>*/}
+				{/*	</Flex>*/}
+				{/*</RadioGroup.Root>*/}
 				<section>
 					<SearchResults
 						noSearchText={!searchQueryInputRef?.current?.value}
