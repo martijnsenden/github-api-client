@@ -20,14 +20,13 @@ type DropdownProps = {
 	width: string;
 };
 
-export function Dropdown({ items, listLabel, onChange, selectLabel, value, width }: DropdownProps) {
+export function Dropdown({ items, listLabel, onChange, value, width }: DropdownProps) {
 	function handleSelectChange(value: string) {
 		onChange(value);
 	}
 
 	return (
 		<Label>
-			<span>{selectLabel}</span>
 			<Select onValueChange={handleSelectChange} value={`${value}`}>
 				<SelectTrigger className={width}>
 					<SelectValue />

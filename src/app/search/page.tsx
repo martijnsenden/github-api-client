@@ -105,7 +105,9 @@ const Page = () => {
 		if (
 			searchQueryHistory.length > 0 &&
 			searchQueryInputRef?.current?.value !==
-				searchQueryHistory[searchQueryHistory.length - 1].searchText &&
+				(searchQueryHistory[searchQueryHistory.length - 1].searchText ||
+					languageFilterInputRef?.current?.value !==
+						searchQueryHistory[searchQueryHistory.length - 1].filters.language) &&
 			searchQueryInputRef.current
 		) {
 			unshiftIntoSearchQueryHistory({ searchText: searchQueryInputRef.current.value, filters, sortBy });
@@ -118,28 +120,36 @@ const Page = () => {
 		}
 	};
 
+	const handleLanguageFilterBlur = () => {
+		if (languageFilterInputRef.current) {
+			storeFilters('language', languageFilterInputRef.current.value);
+		}
+	};
+
 	return (
 		<>
 			<Header />
-			<section>
-				<fieldset>
-					<label className="w-1/2 flex justify-start items-center relative text-gray-placeholders">
-						<input
-							className="border text-black border-gray-borders rounded-lg p-4 pl-12 w-full"
-							onKeyUp={handleNewSearchQuery}
-							placeholder="Search GitHub for repositories"
-							ref={searchQueryInputRef}
-							type="text"
-						/>
-						<SearchIcon className="absolute ml-4 w-[1.5em] h-auto text-gray-placeholders" />
-					</label>
-					<Button className="bg-blue-buttons" onClick={handleSearchButtonClick}>
-						Search
-					</Button>
+			<section className="max-w-3xl flex flex-col gap-6 items-center mx-auto mb-12">
+				<fieldset className="my-0">
+					<div className="flex gap-3 justify-items-center items-center">
+						<label className="max-w-2xl grow flex justify-items-start items-center relative text-gray-placeholders">
+							<input
+								className="border text-black placeholder:text-xs sm:placeholder:text-sm md:placeholder:text-md border-gray-borders rounded-lg p-4 pl-12 w-full"
+								onKeyUp={handleNewSearchQuery}
+								placeholder="Search GitHub for repositories"
+								ref={searchQueryInputRef}
+								type="text"
+							/>
+							<SearchIcon className="absolute ml-4 w-[1.5em] h-auto text-gray-placeholders" />
+						</label>
+						<Button className="bg-blue-buttons" onClick={handleSearchButtonClick}>
+							Search
+						</Button>
+					</div>
 				</fieldset>
-				<fieldset className="justify-start table">
-					<div className="flex flex-row items-center">
-						<legend>Filter by</legend>
+				<fieldset>
+					<div className="flex flex-row flex-wrap gap-3 items-center justify-center">
+						<legend className="font-bold">Filter by</legend>
 						<Dropdown
 							items={getFilterByCountOptions('forks')}
 							listLabel="Forks count"
@@ -156,39 +166,51 @@ const Page = () => {
 							value={filters.stars}
 							width="w-[130px]"
 						/>
-						<label>
+						<label className="flex flex-row gap-3 items-center">
 							Language
-							<input onKeyUp={handleLanguageFilterChange} ref={languageFilterInputRef} type="text" />
+							<input
+								className="border placeholder:text-xs sm:placeholder:text-sm md:placeholder:text-md text-black border-gray-borders rounded-lg p-2 w-full"
+								onBlur={handleLanguageFilterBlur}
+								onKeyUp={handleLanguageFilterChange}
+								placeholder="No language filter"
+								ref={languageFilterInputRef}
+								type="text"
+							/>
 						</label>
 					</div>
 				</fieldset>
 				<RadioGroup
+					className="grow"
 					defaultValue="default"
 					aria-label="Select the field to sort the search results by"
 					onValueChange={(value: string) => storeSortBy(value as SearchSortBy)}
+					value={sortBy}
 				>
-					<fieldset className="flex flex-row gap-2">
-						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<RadioGroupItem value="default" id="r1" />
-							<label htmlFor="r1">Default sorting</label>
-						</div>
-						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<RadioGroupItem value="stars" id="r2" />
-							<label htmlFor="r2">By stars</label>
-						</div>
-						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<RadioGroupItem value="forks" id="r3" />
-							<label htmlFor="r3">By forks</label>
+					<fieldset>
+						<div className="flex flex-row flex-nowrap gap-4">
+							<legend>Sorting</legend>
+							<div style={{ display: 'flex', alignItems: 'center' }}>
+								<RadioGroupItem value="default" id="r1" />
+								<label htmlFor="r1">default</label>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center' }}>
+								<RadioGroupItem value="stars" id="r2" />
+								<label htmlFor="r2">by stars</label>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center' }}>
+								<RadioGroupItem value="forks" id="r3" />
+								<label htmlFor="r3">by forks</label>
+							</div>
 						</div>
 					</fieldset>
 				</RadioGroup>
-				<section>
-					<SearchResults
-						noSearchText={!searchQueryInputRef?.current?.value}
-						searching={searching}
-						searchResults={searchResults}
-					/>
-				</section>
+			</section>
+			<section className="mx-auto flex flex-col items-center gap-6">
+				<SearchResults
+					noSearchText={!searchQueryInputRef?.current?.value}
+					searching={searching}
+					searchResults={searchResults}
+				/>
 			</section>
 		</>
 	);
@@ -196,10 +218,10 @@ const Page = () => {
 	function getFilterByCountOptions(filter: keyof SearchFilters) {
 		return [
 			{ description: `no ${filter} filter`, value: '0' },
-			{ description: '>=10', value: '10' },
-			{ description: '>=100', value: '100' },
-			{ description: '>=1000', value: '1000' },
-			{ description: '>=10000', value: '10000' },
+			{ description: `>=10 ${filter}`, value: '10' },
+			{ description: `>=100 ${filter}`, value: '100' },
+			{ description: `>=1000 ${filter}`, value: '1000' },
+			{ description: `>=10000 ${filter}`, value: '10000' },
 		];
 	}
 

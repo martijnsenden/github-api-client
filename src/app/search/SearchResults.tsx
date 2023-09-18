@@ -3,15 +3,7 @@ import React from 'react';
 import { Repository } from '@/api/github';
 import Image from 'next/image';
 
-import {
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type Props = {
 	noSearchText: boolean;
@@ -35,7 +27,7 @@ export function SearchResults({ noSearchText, searching, searchResults }: Props)
 					src="/assets/images/Mona-searching.png"
 					width={500}
 				/>
-				<h2>Your search did not match any repositories</h2>
+				<h2 className="text-xl font-medium">Your search did not match any repositories</h2>
 			</>
 		);
 	}
@@ -59,6 +51,7 @@ export function SearchResults({ noSearchText, searching, searchResults }: Props)
 								className="text-blue-logo flex h-full items-center underline underline-offset-4"
 								href={`https://github.com/${full_name}`}
 								target="_blank"
+								title={`Visit ${full_name} on GitHub`}
 							>
 								{full_name}
 							</a>

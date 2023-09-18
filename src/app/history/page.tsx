@@ -34,21 +34,24 @@ const Page = () => {
 			<Header />
 			<section>
 				<ol>
-					{searchQueryHistory.map(
-						({ searchText, filters: { forks, language, stars }, sortBy }, i, arr) => {
-							return (
-								<li key={i}>
-									<Link href="/search" onClick={() => handleSearchQueryHistoryItemClick(i)}>
-										{`Search term: "${searchText}"`}
-										{forks > 0 && `, with at least ${forks} forks`}
-										{language && `, containing code written in ${language}`}
-										{stars > 0 && `, with at least ${stars} stars`}
-										{sortBy && `, with results sorted by ${sortBy}`};
-									</Link>
-								</li>
-							);
-						}
-					)}
+					{searchQueryHistory.map(({ searchText, filters: { forks, language, stars }, sortBy }, i) => {
+						return (
+							<li key={i}>
+								<Link
+									className="text-blue-logo flex h-full items-center mb-6 underline underline-offset-4"
+									href="/search"
+									onClick={() => handleSearchQueryHistoryItemClick(i)}
+									title="Search again with this search term, these filters and this sorting"
+								>
+									{`Search term: "${searchText}"`}
+									{forks > 0 && `, with at least ${forks} forks`}
+									{language && `, containing code written in ${language}`}
+									{stars > 0 && `, with at least ${stars} stars`}
+									{sortBy && `, with results sorted by ${sortBy}`}
+								</Link>
+							</li>
+						);
+					})}
 				</ol>
 				{searchQueryHistory.length > 0 ? (
 					<Button className="bg-blue-buttons" onClick={handleClearHistory}>
