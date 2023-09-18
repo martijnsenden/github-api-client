@@ -2,7 +2,16 @@ import React from 'react';
 
 import { Repository } from '@/api/github';
 import Image from 'next/image';
-import { fork } from 'child_process';
+
+import {
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
 
 type Props = {
 	noSearchText: boolean;
@@ -31,28 +40,36 @@ export function SearchResults({ noSearchText, searching, searchResults }: Props)
 		);
 	}
 	return (
-		<Table.Root>
-			<Table.Header>
-				<Table.Row>
-					<Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-					<Table.ColumnHeaderCell>Stars</Table.ColumnHeaderCell>
-					<Table.ColumnHeaderCell>Forks</Table.ColumnHeaderCell>
-					<Table.ColumnHeaderCell>Language</Table.ColumnHeaderCell>
-					<Table.ColumnHeaderCell>Description</Table.ColumnHeaderCell>
-				</Table.Row>
-			</Table.Header>
+		<Table>
+			<TableHeader>
+				<TableRow>
+					<TableHead>Name</TableHead>
+					<TableHead>Stars</TableHead>
+					<TableHead>Forks</TableHead>
+					<TableHead>Language</TableHead>
+					<TableHead>Description</TableHead>
+				</TableRow>
+			</TableHeader>
 
-			<Table.Body>
+			<TableBody className="h-1">
 				{searchResults.map(({ description, forks_count, id, full_name, languages, stargazers_count }) => (
-					<Table.Row key={id}>
-						<Table.RowHeaderCell>{full_name}</Table.RowHeaderCell>
-						<Table.Cell>{stargazers_count}</Table.Cell>
-						<Table.Cell>{forks_count}</Table.Cell>
-						<Table.Cell>{Object.keys(languages).join(', ')}</Table.Cell>
-						<Table.Cell>{description}</Table.Cell>
-					</Table.Row>
+					<TableRow className="h-full" key={id}>
+						<TableCell className="h-full p-0.5 pl-2">
+							<a
+								className="text-blue-logo flex h-full items-center underline underline-offset-4"
+								href={`https://github.com/${full_name}`}
+								target="_blank"
+							>
+								{full_name}
+							</a>
+						</TableCell>
+						<TableCell>{stargazers_count}</TableCell>
+						<TableCell>{forks_count}</TableCell>
+						<TableCell>{Object.keys(languages).join(', ')}</TableCell>
+						<TableCell>{description}</TableCell>
+					</TableRow>
 				))}
-			</Table.Body>
-		</Table.Root>
+			</TableBody>
+		</Table>
 	);
 }

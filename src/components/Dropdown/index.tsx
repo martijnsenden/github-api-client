@@ -1,27 +1,48 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
+
+import { Label } from '@/components/ui/label';
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 
 type DropdownProps = {
 	items: { description: string; value: string }[];
-	label: string;
+	listLabel: string;
 	onChange: (selectedValue: string) => void;
+	selectLabel: string;
 	value: number;
+	width: string;
 };
 
-export function Dropdown({ items, label, onChange, value }: DropdownProps) {
-	function handleSelectChange(event: ChangeEvent<HTMLSelectElement>) {
-		onChange(event.target.value);
+export function Dropdown({ items, listLabel, onChange, selectLabel, value, width }: DropdownProps) {
+	function handleSelectChange(value: string) {
+		onChange(value);
 	}
 
 	return (
-		<label>
-			<span>{label}</span>
-			<select onChange={handleSelectChange} value={value}>
-				{items.map((item) => (
-					<option key={item.value} value={item.value}>
-						{item.description}
-					</option>
-				))}
-			</select>
-		</label>
+		<Label>
+			<span>{selectLabel}</span>
+			<Select onValueChange={handleSelectChange} value={`${value}`}>
+				<SelectTrigger className={width}>
+					<SelectValue />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectGroup>
+						<SelectLabel>{listLabel}</SelectLabel>
+						{items.map((item) => (
+							<SelectItem key={item.value} value={item.value}>
+								{item.description}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+		</Label>
 	);
 }

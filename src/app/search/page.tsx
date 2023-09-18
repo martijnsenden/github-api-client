@@ -1,15 +1,14 @@
 'use client';
 
-import { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { getSearchResults, Repository, SearchFilters, SearchSortBy } from '@/api/github';
 import { SearchResults } from '@/app/search/SearchResults';
 import { Dropdown } from '@/components/Dropdown';
-import { NavigationMenu } from '@/components/NavigationMenu';
-
-// This css file and the import are needed because of an issue with Radix theming that is not yet resolved
-// See https://github.com/radix-ui/themes/issues/59
-import '../theme.css';
+import { Header } from '@/components/Header';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Button } from '@/components/ui/button';
+import SearchIcon from '/public/assets/images/magnifying-glass.svg';
 
 export type SearchQuery = {
 	searchText: string;
@@ -121,54 +120,68 @@ const Page = () => {
 
 	return (
 		<>
-			<NavigationMenu />
+			<Header />
 			<section>
 				<fieldset>
-					<label>
-						Search Github for repositories:
-						<input onKeyUp={handleNewSearchQuery} ref={searchQueryInputRef} type="text" />
+					<label className="w-1/2 flex justify-start items-center relative text-gray-placeholders">
+						<input
+							className="border text-black border-gray-borders rounded-lg p-4 pl-12 w-full"
+							onKeyUp={handleNewSearchQuery}
+							placeholder="Search GitHub for repositories"
+							ref={searchQueryInputRef}
+							type="text"
+						/>
+						<SearchIcon className="absolute ml-4 w-[1.5em] h-auto text-gray-placeholders" />
 					</label>
-					<button onClick={handleSearchButtonClick}>Search</button>
+					<Button className="bg-blue-buttons" onClick={handleSearchButtonClick}>
+						Search
+					</Button>
 				</fieldset>
-				<fieldset>
-					<Dropdown
-						items={getFilterByCountOptions('forks')}
-						label="Forks"
-						onChange={(selectedValue) => storeFilters('forks', parseInt(selectedValue))}
-						value={filters.forks}
-					/>
-					<Dropdown
-						items={getFilterByCountOptions('stars')}
-						label="Stars"
-						onChange={(selectedValue) => storeFilters('stars', parseInt(selectedValue))}
-						value={filters.stars}
-					/>
-					<label>
-						Language
-						<input onKeyUp={handleLanguageFilterChange} ref={languageFilterInputRef} type="text" />
-					</label>
+				<fieldset className="justify-start table">
+					<div className="flex flex-row items-center">
+						<legend>Filter by</legend>
+						<Dropdown
+							items={getFilterByCountOptions('forks')}
+							listLabel="Forks count"
+							onChange={(selectedValue) => storeFilters('forks', parseInt(selectedValue))}
+							selectLabel="forks"
+							value={filters.forks}
+							width="w-[130px]"
+						/>
+						<Dropdown
+							items={getFilterByCountOptions('stars')}
+							listLabel="Stars count"
+							onChange={(selectedValue) => storeFilters('stars', parseInt(selectedValue))}
+							selectLabel="stars"
+							value={filters.stars}
+							width="w-[130px]"
+						/>
+						<label>
+							Language
+							<input onKeyUp={handleLanguageFilterChange} ref={languageFilterInputRef} type="text" />
+						</label>
+					</div>
 				</fieldset>
-				{/*<RadioGroup.Root*/}
-				{/*	defaultValue="default"*/}
-				{/*	aria-label="Select the field to sort the search results by"*/}
-				{/*	onValueChange={(value: string) => storeSortBy(value as SearchSortBy)}*/}
-				{/*	variant="classic"*/}
-				{/*>*/}
-				{/*	<Flex gap="2" direction="row">*/}
-				{/*		<div style={{ display: 'flex', alignItems: 'center' }}>*/}
-				{/*			<RadioGroup.Item value="default" id="r1" />*/}
-				{/*			<label htmlFor="r1">Default sorting</label>*/}
-				{/*		</div>*/}
-				{/*		<div style={{ display: 'flex', alignItems: 'center' }}>*/}
-				{/*			<RadioGroup.Item value="stars" id="r2" />*/}
-				{/*			<label htmlFor="r2">By stars</label>*/}
-				{/*		</div>*/}
-				{/*		<div style={{ display: 'flex', alignItems: 'center' }}>*/}
-				{/*			<RadioGroup.Item value="forks" id="r3" />*/}
-				{/*			<label htmlFor="r3">By forks</label>*/}
-				{/*		</div>*/}
-				{/*	</Flex>*/}
-				{/*</RadioGroup.Root>*/}
+				<RadioGroup
+					defaultValue="default"
+					aria-label="Select the field to sort the search results by"
+					onValueChange={(value: string) => storeSortBy(value as SearchSortBy)}
+				>
+					<fieldset className="flex flex-row gap-2">
+						<div style={{ display: 'flex', alignItems: 'center' }}>
+							<RadioGroupItem value="default" id="r1" />
+							<label htmlFor="r1">Default sorting</label>
+						</div>
+						<div style={{ display: 'flex', alignItems: 'center' }}>
+							<RadioGroupItem value="stars" id="r2" />
+							<label htmlFor="r2">By stars</label>
+						</div>
+						<div style={{ display: 'flex', alignItems: 'center' }}>
+							<RadioGroupItem value="forks" id="r3" />
+							<label htmlFor="r3">By forks</label>
+						</div>
+					</fieldset>
+				</RadioGroup>
 				<section>
 					<SearchResults
 						noSearchText={!searchQueryInputRef?.current?.value}

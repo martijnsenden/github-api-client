@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { SearchQuery } from '@/app/search/page';
-import { NavigationMenu } from '@/components/NavigationMenu';
+import { Header } from '@/components/Header';
+import { Button } from '@/components/ui/button';
 
 const Page = () => {
 	const [searchQueryHistory, setSearchQueryHistory] = useState(
@@ -30,7 +31,7 @@ const Page = () => {
 
 	return (
 		<>
-			<NavigationMenu />
+			<Header />
 			<section>
 				<ol>
 					{searchQueryHistory.map(
@@ -49,7 +50,13 @@ const Page = () => {
 						}
 					)}
 				</ol>
-				<button onClick={handleClearHistory}>Clear history</button>
+				{searchQueryHistory.length > 0 ? (
+					<Button className="bg-blue-buttons" onClick={handleClearHistory}>
+						Clear history
+					</Button>
+				) : (
+					<h2 className="font-medium text-lg">There are no previous searches yet.</h2>
+				)}
 			</section>
 		</>
 	);
