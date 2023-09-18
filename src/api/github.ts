@@ -29,7 +29,7 @@ export async function getSearchResults(
 			forks ? `+forks:>=${forks}` : ''
 		}${stars ? `+stars:>=${stars}` : ''}${language ? `+language:${language}` : ''}`;
 		// Make an HTTP GET request to the GitHub API search endpoint
-		const octokit = new Octokit({ auth: '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' });
+		const octokit = new Octokit({ auth: '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' });
 		const response = await octokit.request('GET /search/repositories', {
 			q: query,
 			sort: sortBy,
