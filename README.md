@@ -12,6 +12,8 @@ Ik zou ook nog wel wat willen refactoren, maar de tijd is nu wel op. Ik zou als 
 
 Ik heb de app niet op Vercel gedeployed. Maar je kunt hem natuurlijk clonen en lokaal draaien. Hieronder instructies.
 
+Ik heb geen authenticatietoken toegevoegd voor de api, dus je kunt maximaal 10 requests per minuut doen (geloof ik). Dat is niet veel, want voor iedere repo die hij ophaalt, moet hij ook een requests doen voor extra informatie. Maar goed, om een idee te krijgen van hoe het werkt, is het denk ik voldoende. Github scant om de veiligheid te garanderen code die wordt gepusht automatisch en deactiveert automatisch tokens die het tegenkomt. Om hem wel toe te voegen moest ik aan de slag met GitHub actions en daar heb ik geen ervaring mee. De tijd gebood dus het token uit de code te halen.
+
 Hopelijk bevalt de app. Het was in ieder geval wel leuk om te maken.
 
 Groet, Martijn
