@@ -33,8 +33,15 @@ const Page = () => {
 		<>
 			<Header />
 			<section>
+				{searchQueryHistory.length > 0 ? (
+					<Button className="bg-blue-buttons" onClick={handleClearHistory}>
+						Clear history
+					</Button>
+				) : (
+					<h2 className="font-medium text-lg">There are no previous searches yet.</h2>
+				)}
 				<ol>
-					{searchQueryHistory.map(({ searchText, filters: { forks, language, stars }, sortBy }, i) => {
+					{searchQueryHistory.map(({ searchTerm, filters: { forks, language, stars }, sortBy }, i) => {
 						return (
 							<li key={i}>
 								<Link
@@ -43,7 +50,7 @@ const Page = () => {
 									onClick={() => handleSearchQueryHistoryItemClick(i)}
 									title="Search again with this search term, these filters and this sorting"
 								>
-									{`Search term: "${searchText}"`}
+									{`Search term: "${searchTerm}"`}
 									{forks > 0 && `, with at least ${forks} forks`}
 									{language && `, containing code written in ${language}`}
 									{stars > 0 && `, with at least ${stars} stars`}
@@ -53,13 +60,6 @@ const Page = () => {
 						);
 					})}
 				</ol>
-				{searchQueryHistory.length > 0 ? (
-					<Button className="bg-blue-buttons" onClick={handleClearHistory}>
-						Clear history
-					</Button>
-				) : (
-					<h2 className="font-medium text-lg">There are no previous searches yet.</h2>
-				)}
 			</section>
 		</>
 	);

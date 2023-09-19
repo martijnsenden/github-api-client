@@ -1,22 +1,18 @@
+import Image from 'next/image';
 import React from 'react';
 
 import { Repository } from '@/api/github';
-import Image from 'next/image';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type Props = {
-	noSearchText: boolean;
 	searching: boolean;
 	searchResults: Repository[];
 };
 
-export function SearchResults({ noSearchText, searching, searchResults }: Props) {
+export function SearchResults({ searching, searchResults }: Props) {
 	if (searching) {
-		return <h2>Searching...</h2>;
-	}
-	if (noSearchText) {
-		return <h2>Search through the public github repos</h2>;
+		return <h2 className="text-xl font-medium absolute xl:top-24">Searching...</h2>;
 	}
 	if (searchResults.length === 0) {
 		return (

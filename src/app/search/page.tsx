@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { getSearchResults, Repository, SearchFilters, SearchSortBy } from '@/api/github';
@@ -11,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import SearchIcon from '/public/assets/images/magnifying-glass.svg';
 
 export type SearchQuery = {
-	searchText: string;
+	searchTerm: string;
 	filters: SearchFilters;
 	sortBy: SearchSortBy;
 };
@@ -26,7 +27,7 @@ const Page = () => {
 	const lastSearchQueryHistoryItemFromSessionStorage =
 		searchQueryHistoryFromSessionStorage.length > 0
 			? searchQueryHistoryFromSessionStorage[0]
-			: { searchText: '', filters: { forks: 0, stars: 0, language: '' }, sortBy: undefined };
+			: { searchTerm: '', filters: { forks: 0, stars: 0, language: '' }, sortBy: undefined };
 	const [filters, setFilters] = useState<SearchFilters>(
 		lastSearchQueryHistoryItemFromSessionStorage.filters
 	);
@@ -37,14 +38,14 @@ const Page = () => {
 	const [searchResults, setSearchResults] = useState<Repository[]>([]);
 	const [searching, setSearching] = useState<boolean>(false);
 
-	const searchQueryInputRef = useRef<HTMLInputElement>(null);
+	const searchTermInputRef = useRef<HTMLInputElement>(null);
 	const languageFilterInputRef = useRef<HTMLInputElement>(null);
 
 	async function handleSearch() {
 		setSearching(true);
 
 		try {
-			const results = await getSearchResults(searchQueryInputRef?.current?.value || '', filters, sortBy);
+			const results = await getSearchResults(searchTermInputRef?.current?.value || '', filters, sortBy);
 			setSearchResults(results);
 		} catch (error) {
 			console.error('', error);
@@ -55,8 +56,8 @@ const Page = () => {
 
 	// Initialize the form with the last search query that was stored if available.
 	useEffect(() => {
-		if (lastSearchQueryHistoryItemFromSessionStorage.searchText && searchQueryInputRef.current) {
-			searchQueryInputRef.current.value = lastSearchQueryHistoryItemFromSessionStorage.searchText;
+		if (lastSearchQueryHistoryItemFromSessionStorage.searchTerm && searchTermInputRef.current) {
+			searchTermInputRef.current.value = lastSearchQueryHistoryItemFromSessionStorage.searchTerm;
 		}
 
 		if (lastSearchQueryHistoryItemFromSessionStorage.sortBy) {
@@ -78,7 +79,7 @@ const Page = () => {
 
 	useEffect(() => {
 		// Execute a search if a search query is available
-		if (searchQueryInputRef?.current?.value) {
+		if (searchTermInputRef?.current?.value) {
 			handleSearch();
 		}
 		// We only want a new search to be executed each time sortBy , filters or the searchQueryHistory array
@@ -96,21 +97,14 @@ const Page = () => {
 	};
 
 	const handleNewSearchQuery = (event: KeyboardEvent<HTMLInputElement>) => {
-		if (event.key === 'Enter' && searchQueryInputRef.current) {
-			unshiftIntoSearchQueryHistory({ searchText: searchQueryInputRef.current.value, filters, sortBy });
+		if (event.key === 'Enter' && searchTermInputRef.current && shouldAddToHistory()) {
+			unshiftIntoSearchQueryHistory({ searchTerm: searchTermInputRef.current.value, filters, sortBy });
 		}
 	};
 
 	const handleSearchButtonClick = () => {
-		if (
-			searchQueryHistory.length > 0 &&
-			searchQueryInputRef?.current?.value !==
-				(searchQueryHistory[searchQueryHistory.length - 1].searchText ||
-					languageFilterInputRef?.current?.value !==
-						searchQueryHistory[searchQueryHistory.length - 1].filters.language) &&
-			searchQueryInputRef.current
-		) {
-			unshiftIntoSearchQueryHistory({ searchText: searchQueryInputRef.current.value, filters, sortBy });
+		if (searchTermInputRef.current && shouldAddToHistory()) {
+			unshiftIntoSearchQueryHistory({ searchTerm: searchTermInputRef.current.value, filters, sortBy });
 		}
 	};
 
@@ -137,7 +131,7 @@ const Page = () => {
 								className="border text-black placeholder:text-xs sm:placeholder:text-sm md:placeholder:text-md border-gray-borders rounded-lg p-4 pl-12 w-full"
 								onKeyUp={handleNewSearchQuery}
 								placeholder="Search GitHub for repositories"
-								ref={searchQueryInputRef}
+								ref={searchTermInputRef}
 								type="text"
 							/>
 							<SearchIcon className="absolute ml-4 w-[1.5em] h-auto text-gray-placeholders" />
@@ -205,12 +199,21 @@ const Page = () => {
 					</fieldset>
 				</RadioGroup>
 			</section>
-			<section className="mx-auto flex flex-col items-center gap-6">
-				<SearchResults
-					noSearchText={!searchQueryInputRef?.current?.value}
-					searching={searching}
-					searchResults={searchResults}
-				/>
+			<section className="mx-auto flex flex-col items-center gap-6 relative">
+				{searchTermInputRef.current?.value && (
+					<SearchResults searching={searching} searchResults={searchResults} />
+				)}
+				{(!searchTermInputRef.current?.value || searching) && (
+					<Image
+						className="-m-24"
+						alt="Mona looking through binoculars at some far away place"
+						height={0}
+						sizes="100vw"
+						src="/assets/images/Mona-searching-landscape.png"
+						style={{ minWidth: '1200px', width: '100%', height: 'auto' }}
+						width={0}
+					/>
+				)}
 			</section>
 		</>
 	);
@@ -229,9 +232,9 @@ const Page = () => {
 		const newFilters = { ...filters, [type]: value };
 		setFilters(newFilters);
 
-		if (searchQueryInputRef.current?.value) {
+		if (searchTermInputRef.current?.value) {
 			unshiftIntoSearchQueryHistory({
-				searchText: searchQueryInputRef.current.value,
+				searchTerm: searchTermInputRef.current.value,
 				filters: newFilters,
 				sortBy,
 			});
@@ -242,13 +245,24 @@ const Page = () => {
 		// Sort searchResults by stars
 		setSortBy(type);
 
-		if (searchQueryInputRef.current?.value) {
+		if (searchTermInputRef.current?.value) {
 			unshiftIntoSearchQueryHistory({
-				searchText: searchQueryInputRef.current.value,
+				searchTerm: searchTermInputRef.current.value,
 				filters,
 				sortBy: type,
 			});
 		}
+	}
+
+	function shouldAddToHistory() {
+		const searchQueryHistoryIsPresent = searchQueryHistory.length !== 0;
+		const eitherSearchTermOrLanguageHasChanged =
+			searchTermInputRef.current &&
+			searchQueryHistoryIsPresent &&
+			(searchTermInputRef.current.value !== searchQueryHistory[0].searchTerm ||
+				languageFilterInputRef.current?.value !== searchQueryHistory[0].filters.language);
+
+		return !searchQueryHistoryIsPresent || eitherSearchTermOrLanguageHasChanged;
 	}
 };
 

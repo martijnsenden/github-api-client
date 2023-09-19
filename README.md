@@ -1,3 +1,23 @@
+## Notities
+
+Ik heb deze app gedurende de afgelopen avonden gebouwd. Hier wat aantekeningen over de app en het proces.
+
+Ik heb gekozen het in Next.js te bouwen. Daar had ik nog niet veel ervaring mee en het leek me wel een goede gelegenheid.
+
+Belangrijkste opmerking: ik heb uiteindelijk afgeweken van de opdracht. De filter op `followers`heb ik niet gebouwd. In de documentatie van GitHub staat deze inderdaad wel genoemd, maar asl je er dan op filtert, zie je geen verschil in de resultaten. Er is ook geen veld in de resositories die je terugkrijgt van GitHub dat ermee correspondeert. Ik dacht eerst misschien `subscribers`, maar dat leek toch ook niet te kloppen. Ik heb het toen maar gelaten en vervangen voor een extra filter op forks.
+
+Verder was het toch nog best wat werk. Aan het inrichten van Jest en testing-library ben ik niet toegekomen. Normaal gebruik ik dat wel. Ook iets als Cypress tests heb ik niet gebouwd.
+
+Ik zou ook nog wel wat willen refactoren, maar de tijd is nu wel op. Ik zou als eerste de search page uit elkaar halen in kleinere componenten. Ik had wel een poging gedaan, maar liep tegen issues aan en heb toen gekozen om dat voor nu niet te doen.
+
+Ik heb de app niet op Vercel gedeployed. Maar je kunt hem natuurlijk clonen en lokaal draaien. Hieronder instructies.
+
+Hopelijk bevalt de app. Het was in ieder geval wel leuk om te maken.
+
+Groet, Martijn
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
